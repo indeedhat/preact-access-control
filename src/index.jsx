@@ -3,52 +3,112 @@
  */
 import {h, Component} from 'preact';
 import {route} from 'preact-router';
+import _ from 'lodash';
 
-let AccessControl = (allowedRoles) => {
-  return (ChildComponent) => {
-    return class AcComponent extends Component {
-      constructor(props) {
-        super(props);
-        this.state = {user: {}};
 
-        if ('function' !== typeof AccessMethods.check || 'function' !== typeof AccessMethods.fetch) {
-          console.error('Please run AccessControl.init');
-        }
-
-        this.onPathChange();
-      }
-
-      onPathChange() {
-        this.setState({user:  AccessMethods.fetch()});
-      };
-
-      render({ onFail }, { user }) {
-        if (AccessMethods.check(allowedRoles, user)) {
-          return <ChildComponent {... this.props}/>;
-        } else if (['function', 'Component'].includes(typeof onFail)) {
-          const OnFail = onFail;
-          return <OnFail {... this.props}/>;
-        } else if ('object' === typeof onFail) {
-          return onFail;
-        } else if ('string' === typeof onFail) {
-          route(onFail);
-        }
-
-        return null;
-      }
-    }
-  };
-};
-
-AccessControl.init = (check, fetch) => {
-  AccessMethods.check = check;
-  AccessMethods.fetch = fetch;
-};
-
-const AccessMethods = {
+const AccessControls = {
   check: null,
   fetch: null
 };
 
-export default AccessControl; 
-export AccessControl;
+
+let componentRegister = [];
+componentRegister.kill = function(component) {
+  let index = componentRegister.indexOf(component);
+  if (~index) {
+    componentRegister.splice(index, 1);
+  }
+};
+
+
+class AccessComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {user: {}};
+
+    if ('function' !== typeof AccessMethods.check || 'function' !== typeof AccessMethods.fetch) {
+      throw new Error('Please call ')
+    }
+
+    componentRegister.push(this);
+  }
+
+  updateAuthDetails = (user) => {
+    if (!_.isEqual(this.state.user, user)) {
+      this.setState({user});
+    }
+  };
+
+  componentWillMount() {
+    AccessControls.fetch();
+  };
+
+  componentWillUnmount() {
+    componentRegister.kill(this);
+  }
+
+  render({onFail, roles, children}, {user}) {
+    if (AccessControls.check(roles, user)) {
+      return {children};
+    }
+
+    if (onFail instanceof Component) {
+      return onFail;
+    }
+
+    if (Component.isPrototypeOf(onFail)) {
+      const OnFail = onFail;
+      return <OnFail/>;
+    }
+
+    if ('function' === typeof onFail) {
+      onFail();
+    } else if ('string' === typeof onFail) {
+      route(onFail);
+    }
+
+    return null;
+  }
+}
+
+
+function AccessControl(allowedRoles)
+{
+  return (ChildComponent, onFail) => {
+    return (props) => {
+      return (
+        <AccessComponent onFail={onFail} roles={allowedRoles}>
+          <ChildComponent />
+        </AccessComponent>
+
+      );
+    }
+  };
+}
+
+
+AccessControl.init = (check, fetch) => {
+  if ('function' !== typeof check) {
+    throw new Error('check must be callable');
+  }
+  if ('function' !== typeof fetch) {
+    throw new Error('fetch must be callable');
+  }
+
+  AccessControls.check = check;
+  AccessControls.fetch = (dontPush) => {
+    let model = fetch();
+
+    if (!dontPush) {
+      componentRegister.map(component => {
+        component.updateAuthDetails(model);
+      });
+    }
+
+    return model;
+  };
+};
+
+
+export {AccessControl, AccessComponent, AccessControls};
+export default AccessControl;

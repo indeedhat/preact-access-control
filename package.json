@@ -1,7 +1,7 @@
 {
   "name": "preact-access-control",
-  "version": "0.1.0",
-  "description": "Preact rounter extension that provides basic access control facilities",
+  "version": "0.2.0",
+  "description": "Preact package that provides basic access control facilities",
   "main": "src/index.jsx",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,12 +19,13 @@
     "history"
   ],
   "author": "Matt Holmes",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/indeedhat/preact-access-control/issues"
   },
   "homepage": "https://github.com/indeedhat/preact-access-control#readme",
   "dependencies": {
+    "lodash": "^4.17.4",
     "preact": "^8.2.6",
     "preact-router": "^2.6.0"
   }
