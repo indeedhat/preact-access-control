@@ -38,29 +38,33 @@ repeatedly throughout your application this is done with `AccessControl()`
 Access control accepts a single parameter:\
 `allowedRoles`: an array of the role keys you wish to have access to the group\
 
-    const UserAccess  = AccessControl(['user', 'admin']);
-    const AdminAccess = AccessControl(['admin']);
+```jsx
+const UserAccess  = AccessControl(['user', 'admin']);
+const AdminAccess = AccessControl(['admin']);
+```
 
 Creating control groups in this way makes it simple to add access control to your routs with preact-router
 
-    import {Router, Route} from 'preact-router';
-    
-    ...
-    
-    render() {
-        return (
-          <div id="page">
-            <Header/>
-            <Log name='body'>
-              <Router>
-                <Route component={UserAccess(HomePage)} default />
-                <Route component={AdminAccess(AdminHome)} path='/admin' />
-                </Route>
-              </Router>
-            </Log>
-          </div>
-        );
-      }
+```jsx
+import {Router, Route} from 'preact-router';
+
+...
+
+render() {
+    return (
+      <div id="page">
+        <Header/>
+        <Log name='body'>
+          <Router>
+            <Route component={UserAccess(HomePage)} default />
+            <Route component={AdminAccess(AdminHome)} path='/admin' />
+            </Route>
+          </Router>
+        </Log>
+      </div>
+    );
+  }
+```
 
 you can also add a fallback for when a route fails with the control groups optional second parameter `onFail`:
 
@@ -79,33 +83,39 @@ if nothing is passed to `onFail` then the blocked Component will just not be ren
 
 Access can also be defined on a case by case basis by using the `AccessComponent`
 
-    import {AccessComponent} from 'preact-access-control';
-    
-    ...
-    
-    <AccessComponent roles={['moderator', 'admin']}>
-      <SomeComponent />
-      <SomeOtherComponent />
-    </AccessComponent>
- 
+```jsx
+import {AccessComponent} from 'preact-access-control';
+
+...
+
+<AccessComponent roles={['moderator', 'admin']}>
+  <SomeComponent />
+  <SomeOtherComponent />
+</AccessComponent>
+```
+
 As with the control groups `AccessComponent` optionally accepts a `onFail` property with identical results
 
-    <AccessComponent roles={['moderator', 'admin']} onFail={() => { /* do something */ }}>
-      <SomeComponent />
-      <SomeOtherComponent />
-    </AccessComponent>
+```jsx
+<AccessComponent roles={['moderator', 'admin']} onFail={() => { /* do something */ }}>
+  <SomeComponent />
+  <SomeOtherComponent />
+</AccessComponent>
+```
 
 ### AccessControls
 
 Finally the callbacks set on `AccessControl.init` are exposed in case you wish to call them manually at a later date
 
-    import {AccessControls} from 'preact-access-control';
-    
-    // manually fetch data
-    const authModel = AccessControls.fetch();
-    
-    // manually check a role
-    const access = AccessComtrols.check(['user'], authModel);
+```jsx
+import {AccessControls} from 'preact-access-control';
+
+// manually fetch data
+const authModel = AccessControls.fetch();
+
+// manually check a role
+const access = AccessComtrols.check(['user'], authModel);
+```
 
 Any time you manually call `AccessControls.fetch` the updated authModel will be passed to all access groups 
 and mounted AccessComponents, this can be prevented by passing `true` to `AccessControls.fetch()`
@@ -125,4 +135,4 @@ requests
 * publish the package when it is a little more complete and i am happy with it
 
 ### License
-[MIT Licensed]{https://github.com/indeedhat/preact-access-control/blob/master/LICENSE}
+[MIT Licensed]{./LICENSE}
