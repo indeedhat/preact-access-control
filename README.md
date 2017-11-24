@@ -13,19 +13,21 @@ Before you can make use of the library you need to call the initialise function.
 `check`: a function to check if the user has access\
 `fetch`: a function fetch the users auth model from wherever you want to store/cache it
 
-    import AccessControl from 'preact-access-control';
-    
-    AccessControl.init(
-      (allowedRoles, authModel) => {
-        // check if the user has access. For example:
-        return ~allowedRoles.indexOf(authModel.group)
-      },
-      () => {
-        // get your access model from wherever you like
-        // for this example lets set a static one
-        retrun {name: 'indeedhat', group: 'user'}
-      }
-    );
+```jsx
+import AccessControl from 'preact-access-control';
+
+AccessControl.init(
+  (allowedRoles, authModel) => {
+    // check if the user has access. For example:
+    return ~allowedRoles.indexOf(authModel.group)
+  },
+  () => {
+    // get your access model from wherever you like
+    // for this example lets set a static one
+    retrun {name: 'indeedhat', group: 'user'}
+  }
+);
+```
 
 It is worth noting that `fetch` gets called a LOT so you will probably want to implement
 some kind of caching mechanism instead of making a server call each time. I plan to add a
@@ -58,7 +60,6 @@ render() {
           <Router>
             <Route component={UserAccess(HomePage)} default />
             <Route component={AdminAccess(AdminHome)} path='/admin' />
-            </Route>
           </Router>
         </Log>
       </div>
