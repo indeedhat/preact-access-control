@@ -136,4 +136,4 @@ requests
 * publish the package when it is a little more complete and i am happy with it
 
 ### License
-[MIT Licensed]{./LICENSE}
+[MIT Licensed](./LICENSE)
