@@ -1,6 +1,6 @@
 {
   "name": "preact-access-control",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Preact package that provides basic access control facilities",
   "main": "src/index.jsx",
   "scripts": {
