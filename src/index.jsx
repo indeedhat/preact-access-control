@@ -27,7 +27,7 @@ class AccessComponent extends Component {
     super(props);
     this.state = {user: {}};
 
-    if ('function' !== typeof AccessMethods.check || 'function' !== typeof AccessMethods.fetch) {
+    if ('function' !== typeof AccessControls.check || 'function' !== typeof AccessControls.fetch) {
       throw new Error('Please call ')
     }
 
