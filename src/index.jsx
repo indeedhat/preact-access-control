@@ -53,7 +53,7 @@ class AccessComponent extends Component {
       return {children};
     }
 
-    if (onFail instanceof Component) {
+    if (onFail instanceof Component || 'object' === typeof onFail) {
       return onFail;
     }
 
