@@ -4,6 +4,7 @@
 import {h, Component} from 'preact';
 import {route} from 'preact-router';
 import _ from 'lodash';
+import {AccessDefaults} from './helpers';
 
 
 const AccessControls = {
@@ -72,12 +73,12 @@ class AccessComponent extends Component {
 }
 
 
-function AccessControl(allowedRoles)
+function AccessControl(allowedRoles, defaultOnFail)
 {
   return (ChildComponent, onFail) => {
     return (props) => {
       return (
-        <AccessComponent onFail={onFail} roles={allowedRoles}>
+        <AccessComponent onFail={onFail || defaultOnFail} roles={allowedRoles}>
           <ChildComponent />
         </AccessComponent>
 
@@ -110,5 +111,5 @@ AccessControl.init = (check, fetch) => {
 };
 
 
-export {AccessControl, AccessComponent, AccessControls};
+export {AccessControl, AccessComponent, AccessControls, AccessDefaults};
 export default AccessControl;

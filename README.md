@@ -37,8 +37,10 @@ default one at when i have time but for now you are on your own.
 The intended way of using preact-access-control is to create control group wrappers and use them 
 repeatedly throughout your application this is done with `AccessControl()`
 
-Access control accepts a single parameter:\
+Access control accepts two parameters:\
 `allowedRoles`: an array of the role keys you wish to have access to the group\
+`defaultOnFaol`: this is an optional parameter that will be passed to the components onFail if nothing is passed to `
+onFail` (See below for details of `onFail`)
 
 ```jsx
 const UserAccess  = AccessControl(['user', 'admin']);
@@ -121,6 +123,30 @@ const access = AccessComtrols.check(['user'], authModel);
 Any time you manually call `AccessControls.fetch` the updated authModel will be passed to all access groups 
 and mounted AccessComponents, this can be prevented by passing `true` to `AccessControls.fetch()`
 
+## Default Methods
+This library provides a number of default methods for managing your auth details
+
+### accessCache
+This is a simple caching mechanism for your users auth details, it accepts two parameters\
+`callback`: this is your custom function for returning the users auth details\
+`timeout`: the cache timeout in milliseconds, the auth details will only be reloaded after the timeout his expired 
+and an AuthComponent is reloaded
+ 
+### fetch
+this method uses fetch to return your JSON encoded auth data from a server API, it takes a single parameter:\
+`url`: the URL of your API endpoint
+
+### check
+this method checks the users auth details for access against the access list declared in the AccessComponent.\
+It assumes that the auth data object has a group field
+
+```jsx
+{
+  group: 'user',
+  ...
+}
+```
+
 ## Contributing
 
 I would be happy to hear any comments or suggestions you have to improve the package along with any code change pull
@@ -128,9 +154,6 @@ requests
 
 ## TODO
 
-* decide upon and implement a default caching mechanism
-* implement default fetch and check methods
-* allow for an optional fallback onFail parameter to be passed when creating a control group
 * write some proper documentation
 * write some unit tests
 * publish the package when it is a little more complete and i am happy with it

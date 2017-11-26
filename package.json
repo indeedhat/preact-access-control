@@ -27,6 +27,7 @@
   "dependencies": {
     "lodash": "^4.17.4",
     "preact": "^8.2.6",
-    "preact-router": "^2.6.0"
+    "preact-router": "^2.6.0",
+    "whatwg-fetch": "^2.0.3"
   }
 }
