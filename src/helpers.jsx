@@ -1,8 +1,9 @@
 import 'whatwg-fetch';
+import {componentRegister} from 'index';
 
 const authCache = {
   time: 0,
-  data: null
+  data: null,
 };
 
 const AccessDefaults = {
@@ -15,20 +16,29 @@ const AccessDefaults = {
     }
 
     const now = +new Date;
-    if (authCache.data && authCache.time > (authCache.time + timeout)) {
-      return authCache.data;
+    if (authCache.data && now < (authCache.time + timeout)) {
+      componentRegister.passToComponents(authCache.data);
+    } else {
+      callback((data) => {
+        console.log('got new data', data);
+        authCache.data = data;
+        authCache.time = now;
+        componentRegister.passToComponents(data);
+      });
     }
-
-    authCache.data = callback();
-    authCache.time = now;
-
-    return authCache.data;
   },
 
-  fatch: (url) => {
-    return AccessDefaults.authCache(() => {
-      return fetch(url);
-    }, 30000);
+  fetch: (url, timeout) => {
+    return () => {
+      AccessDefaults.authCache((callback) => {
+        fetch(url)
+          .then((response) => {
+            return response.json();
+          }).then((data) => {
+          callback(data);
+        });
+      }, timeout || 30000);
+    };
   },
 
   check: (allowedRoles, authData) => {

@@ -4,6 +4,10 @@ This project was inspired by an article i read by Carl Vitullo at hackernoon [Li
 
 preact-access-control gives a basic framework for doing role based auth in your preact app
 
+## Update Notes
+version 0.4.0 has been reworked to better deal with async fetch methods, i honestly don't know what i was thinking with 
+the previous implementation
+
 ## Basic usage
 
 ### Initialise
@@ -11,7 +15,7 @@ Before you can make use of the library you need to call the initialise function.
 
 `AccessControl.init` accepts two parameters:\
 `check`: a function to check if the user has access\
-`fetch`: a function fetch the users auth model from wherever you want to store/cache it
+`fetch`: a function fetch the users auth model from wherever you want to store/cache it and pass it the predefined callback
 
 ```jsx
 import AccessControl from 'preact-access-control';
@@ -21,17 +25,37 @@ AccessControl.init(
     // check if the user has access. For example:
     return ~allowedRoles.indexOf(authModel.group)
   },
-  () => {
+  (callback) => {
     // get your access model from wherever you like
     // for this example lets set a static one
-    retrun {name: 'indeedhat', group: 'user'}
+    callback({name: 'indeedhat', group: 'user'});
   }
 );
 ```
 
 It is worth noting that `fetch` gets called a LOT so you will probably want to implement
-some kind of caching mechanism instead of making a server call each time. I plan to add a
-default one at when i have time but for now you are on your own.
+some kind of caching mechanism instead of making a server call each time.
+
+here is an example of the same init making use of the default auth cache
+
+```jsx
+import {AccessControl, AccessDefaults} from 'preact-access-control';
+
+AccessControl.init(
+  (allowedRoles, authModel) => {
+    // check if the user has access. For example:
+    return ~allowedRoles.indexOf(authModel.group)
+  },
+  (callback) => {
+    // get your access model from wherever you like
+    // for this example lets set a static one
+    AccessDefaults.authCache((callback) {
+      callback({name: 'indeedhat', group: 'user'});
+    });
+  }
+);
+```
+
 
 ### Control Groups (AccessControl)
 The intended way of using preact-access-control is to create control group wrappers and use them 
@@ -128,13 +152,15 @@ This library provides a number of default methods for managing your auth details
 
 ### accessCache
 This is a simple caching mechanism for your users auth details, it accepts two parameters\
-`callback`: this is your custom function for returning the users auth details\
+`callback`: this is your custom function for returning the users auth details (this function should accept a single 
+callback parameter)\
 `timeout`: the cache timeout in milliseconds, the auth details will only be reloaded after the timeout his expired 
 and an AuthComponent is reloaded
  
 ### fetch
-this method uses fetch to return your JSON encoded auth data from a server API, it takes a single parameter:\
+this method uses fetch to return your JSON encoded auth data from a server API, it takes two parameters:\
 `url`: the URL of your API endpoint
+`timeout`: (optional - default 30000)the length of time in ms the details will be cached for before re-fetching 
 
 ### check
 this method checks the users auth details for access against the access list declared in the AccessComponent.\

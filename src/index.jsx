@@ -21,6 +21,12 @@ componentRegister.kill = function(component) {
   }
 };
 
+componentRegister.passToComponents = (model) => {
+  componentRegister.map(component => {
+    component.updateAuthDetails(model);
+  });
+};
+
 
 class AccessComponent extends Component {
   constructor(props) {
@@ -88,28 +94,20 @@ function AccessControl(allowedRoles, defaultOnFail)
 }
 
 
-AccessControl.init = (check, fetch) => {
-  if ('function' !== typeof check) {
+AccessControl.init = (checkCb, fetchCb) => {
+  if ('function' !== typeof checkCb) {
     throw new Error('check must be callable');
   }
-  if ('function' !== typeof fetch) {
+  if ('function' !== typeof fetchCb) {
     throw new Error('fetch must be callable');
   }
 
-  AccessControls.check = check;
-  AccessControls.fetch = (dontPush) => {
-    let model = fetch();
-
-    if (!dontPush) {
-      componentRegister.map(component => {
-        component.updateAuthDetails(model);
-      });
-    }
-
-    return model;
+  AccessControls.check = checkCb;
+  AccessControls.fetch = () => {
+    fetchCb(componentRegister.passToComponents);
   };
 };
 
 
-export {AccessControl, AccessComponent, AccessControls, AccessDefaults};
+export {AccessControl, AccessComponent, AccessControls, AccessDefaults, componentRegister};
 export default AccessControl;
