@@ -46,14 +46,16 @@ AccessControl.init(
     // check if the user has access. For example:
     return ~allowedRoles.indexOf(authModel.group)
   },
-  (callback) => {
+  () => {
     // get your access model from wherever you like
     // for this example lets set a static one
-    AccessDefaults.authCache((callback) {
+    AccessDefaults.authCache((callback) => {
       callback({name: 'indeedhat', group: 'user'});
     });
   }
 );
+// in this case the callback paramater can be emited from either the outer fetch method or the fucnction passed to 
+// AccessDefaults.authCache as they both will be passed the same callback
 ```
 
 
