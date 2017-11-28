@@ -1,5 +1,5 @@
 import 'whatwg-fetch';
-import {componentRegister} from 'index';
+import {componentRegister} from './index';
 
 const authCache = {
   time: 0,
@@ -20,7 +20,6 @@ const AccessDefaults = {
       componentRegister.passToComponents(authCache.data);
     } else {
       callback((data) => {
-        console.log('got new data', data);
         authCache.data = data;
         authCache.time = now;
         componentRegister.passToComponents(data);
