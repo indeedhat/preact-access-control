@@ -56,7 +56,7 @@ class AccessComponent extends Component {
 
   render({onFail, roles, children}, {user}) {
     if (AccessControls.check(roles, user)) {
-      return {children};
+      return <span>{children}</span>;
     }
 
     if (onFail instanceof Component || 'object' === typeof onFail) {
