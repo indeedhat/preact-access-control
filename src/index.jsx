@@ -85,7 +85,7 @@ function AccessControl(allowedRoles, defaultOnFail)
     return (props) => {
       return (
         <AccessComponent onFail={onFail || defaultOnFail} roles={allowedRoles}>
-          <ChildComponent />
+          <ChildComponent {...props} />
         </AccessComponent>
 
       );
